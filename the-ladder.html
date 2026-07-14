@@ -1,0 +1,1567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#E89BBE">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="The Ladder">
+<title>THE LADDER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#ffffff;
+  --near:#FAFAFB;
+  --pink:#E89BBE;
+  --blue:#8FC0E0;
+  --charcoal:#3A3A44;
+  --grey:#6E6E78;
+  --soft-pink:#FBE9F0;
+  --soft-blue:#E5F1FA;
+  --soft-grey:#F2F2F4;
+  --soft-yellow:#FBF3D9;
+  --soft-green:#E3F2E6;
+  --radius:16px;
+  --shadow:0 6px 20px rgba(58,58,68,0.08);
+  --shadow-soft:0 3px 12px rgba(58,58,68,0.06);
+  --head:"League Spartan", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+:root[data-theme="dark"]{
+  --white:#25252d;
+  --near:#1a1a1f;
+  --charcoal:#ECECF0;
+  --grey:#9C9CA8;
+  --soft-pink:#3a2731;
+  --soft-blue:#213039;
+  --soft-grey:#30303a;
+  --soft-yellow:#3a3420;
+  --soft-green:#1f3324;
+  --shadow:0 6px 20px rgba(0,0,0,0.45);
+  --shadow-soft:0 3px 12px rgba(0,0,0,0.35);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0;}
+body{
+  font-family:var(--body);
+  color:var(--charcoal);
+  background:var(--near);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  transition:background-color .2s ease, color .2s ease;
+}
+#app{
+  max-width:480px;
+  margin:0 auto;
+  min-height:100vh;
+  background:var(--white);
+  padding-bottom:96px;
+  position:relative;
+}
+h1,h2,h3,h4{font-family:var(--head); font-weight:700; margin:0; letter-spacing:0.01em;}
+
+/* Top bar */
+#topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 20px 10px;
+  position:sticky; top:0; z-index:5;
+  background:var(--white);
+}
+#topbar .wordmark{font-family:var(--head); font-weight:700; font-size:18px; letter-spacing:0.14em; color:var(--charcoal);}
+#gear{
+  width:44px; height:44px; border:none; background:transparent; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; color:var(--grey);
+  border-radius:12px;
+}
+#gear:active{background:var(--soft-grey);}
+
+/* Views */
+#view{padding:4px 18px 20px;}
+.section-title{font-size:13px; letter-spacing:0.16em; text-transform:uppercase; color:var(--grey); font-family:var(--head); font-weight:600; margin:22px 4px 10px;}
+
+/* Today header */
+.today-date{font-size:15px; color:var(--grey); margin:2px 4px 4px;}
+.today-heading{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0 4px 4px;}
+.level-badge{
+  display:inline-flex; align-items:center; gap:7px;
+  background:var(--soft-pink); color:var(--charcoal);
+  border-radius:999px; padding:7px 15px; font-size:13.5px; font-weight:600;
+  font-family:var(--head); letter-spacing:0.04em;
+}
+.level-badge .dot{width:9px; height:9px; border-radius:50%; background:var(--blue); display:inline-block;}
+
+/* Bad week button */
+.badweek-btn{
+  width:100%; margin:14px 0 6px; padding:13px 16px;
+  border-radius:var(--radius); border:1.5px solid var(--soft-grey);
+  background:var(--white); color:var(--grey);
+  font-family:var(--body); font-size:15px; font-weight:500; cursor:pointer;
+  display:flex; align-items:center; justify-content:space-between;
+  min-height:48px;
+}
+.badweek-btn.on{background:var(--soft-blue); border-color:var(--blue); color:var(--charcoal);}
+.badweek-btn .state{font-weight:600; font-size:13px; letter-spacing:0.04em;}
+
+/* Duty items */
+.duty{
+  display:flex; align-items:flex-start; gap:13px;
+  background:var(--white); border:1.5px solid var(--soft-grey);
+  border-radius:var(--radius); padding:14px 15px; margin:10px 0;
+  cursor:pointer; min-height:48px;
+}
+.duty.tint-pink{background:var(--soft-pink); border-color:#F3D3E1;}
+.duty.checked{background:var(--soft-grey); border-color:var(--soft-grey);}
+.duty.checked .duty-text{color:var(--grey); text-decoration:line-through; text-decoration-color:#c9c9d0;}
+.checkbox{
+  flex:0 0 auto; width:26px; height:26px; border-radius:8px;
+  border:2px solid var(--pink); background:var(--white);
+  display:flex; align-items:center; justify-content:center; margin-top:1px;
+}
+.duty.tint-pink .checkbox{border-color:#D98CB0;}
+.checkbox svg{width:16px; height:16px; opacity:0; transition:opacity .12s;}
+.duty.checked .checkbox{background:var(--pink); border-color:var(--pink);}
+.duty.checked .checkbox svg{opacity:1;}
+.duty-text{font-size:15.5px; color:var(--charcoal);}
+.duty.tint-pink .duty-text{font-weight:500;}
+
+.soft-note{
+  background:var(--soft-pink); border-radius:var(--radius);
+  padding:14px 16px; margin:12px 0; font-size:14.5px; color:var(--charcoal);
+}
+.grey-note{color:var(--grey); font-style:italic; font-size:15px; padding:24px 6px; text-align:center;}
+.done-line{text-align:center; color:var(--charcoal); font-family:var(--head); font-weight:600; font-size:16px; padding:18px 0 4px; letter-spacing:0.03em;}
+.light-note{color:var(--grey); font-size:14.5px; padding:8px 4px 2px; font-style:italic;}
+
+/* Ladder */
+.ladder-card{
+  border:1.5px solid var(--soft-grey); border-radius:var(--radius);
+  margin:12px 0; overflow:hidden; background:var(--white);
+  transition:opacity .2s;
+}
+.ladder-card.current{border-color:var(--pink); box-shadow:0 0 0 3px rgba(232,155,190,0.28), var(--shadow-soft);}
+.ladder-card.locked{opacity:0.55;}
+.ladder-card.done{background:var(--soft-grey);}
+.ladder-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:16px 16px; cursor:pointer; min-height:48px;
+}
+.ladder-head .titles{display:flex; flex-direction:column; gap:3px;}
+.ladder-name{font-family:var(--head); font-weight:700; font-size:17px; display:flex; align-items:center; gap:8px;}
+.ladder-band{font-size:13px; color:var(--grey);}
+.ladder-icon{color:var(--grey); flex:0 0 auto;}
+.ladder-body{padding:2px 16px 18px; border-top:1px solid var(--soft-grey);}
+.lbl-block{margin:14px 0 0;}
+.lbl-title{font-family:var(--head); font-weight:600; font-size:11.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--pink); margin-bottom:3px;}
+.ladder-card.locked .lbl-title, .ladder-card.done .lbl-title{color:var(--grey);}
+.lbl-text{font-size:14.5px; color:var(--charcoal);}
+
+/* Promotion meter */
+.meter{margin:16px 0 4px; padding:15px; background:var(--soft-pink); border-radius:12px;}
+.meter-title{font-family:var(--head); font-weight:600; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--charcoal); margin-bottom:12px;}
+.slots{display:flex; gap:14px; justify-content:center;}
+.slot{display:flex; flex-direction:column; align-items:center; gap:7px;}
+.slot-circle{width:40px; height:40px; border-radius:50%; border:2.5px solid var(--pink); background:var(--white);}
+.slot.filled .slot-circle{background:var(--pink);}
+.slot-label{font-size:11px; color:var(--grey); letter-spacing:0.03em;}
+.meter-msg{margin-top:12px; font-size:13.5px; color:var(--charcoal); text-align:center;}
+.meter-msg.reset{color:#B85C86; font-weight:500;}
+.meter-msg.promoted{font-family:var(--head); font-weight:700; letter-spacing:0.1em; color:var(--charcoal);}
+.gate-check{display:flex; align-items:center; gap:11px; margin-top:14px; padding:12px 13px; background:var(--white); border-radius:10px; cursor:pointer; min-height:48px;}
+.gate-check .checkbox{width:24px; height:24px;}
+.gate-check.checked .checkbox{background:var(--pink); border-color:var(--pink);}
+.gate-check.checked .checkbox svg{opacity:1;}
+.gate-check .gc-text{font-size:14px;}
+.ladder-footer{font-size:12.5px; color:var(--grey); text-align:center; padding:18px 10px 6px; line-height:1.5;}
+.check-mark{color:var(--grey);}
+
+/* Numbers */
+.closerate{background:var(--soft-blue); border-radius:var(--radius); padding:14px 16px; margin:8px 0 4px; font-size:15px; color:var(--charcoal); font-weight:500;}
+.week-form, .month-form{border:1.5px solid var(--soft-grey); border-radius:var(--radius); padding:14px 15px; margin:10px 0; background:var(--white);}
+.wf-label{font-family:var(--head); font-weight:600; font-size:14px; margin-bottom:10px; color:var(--charcoal);}
+.field-row{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:8px 0;}
+.field-row label{font-size:14px; color:var(--grey);}
+.field-row input{
+  width:110px; text-align:right; font-family:var(--body); font-size:15px;
+  border:1.5px solid var(--soft-grey); border-radius:10px; padding:9px 11px; color:var(--charcoal);
+  background:var(--near); min-height:44px;
+}
+.field-row input:focus{outline:none; border-color:var(--blue); background:var(--white);}
+.month-form input.sentence{width:100%; text-align:left; margin-top:8px;}
+.save-btn{
+  width:100%; margin-top:12px; padding:12px; border:none; border-radius:12px;
+  background:var(--pink); color:var(--white); font-family:var(--head); font-weight:600;
+  font-size:14px; letter-spacing:0.06em; cursor:pointer; min-height:48px;
+}
+.save-btn:active{opacity:0.85;}
+.save-btn.saved{background:var(--blue);}
+table.scoretable{width:100%; border-collapse:collapse; margin:8px 0; font-size:12.5px;}
+table.scoretable th{font-family:var(--head); font-weight:600; color:var(--grey); text-align:right; padding:8px 5px; font-size:11px; letter-spacing:0.03em; border-bottom:1.5px solid var(--soft-grey);}
+table.scoretable th:first-child{text-align:left;}
+table.scoretable td{padding:9px 5px; text-align:right; border-bottom:1px solid var(--soft-grey); color:var(--charcoal);}
+table.scoretable td:first-child{text-align:left; color:var(--grey); white-space:nowrap;}
+.empty-note{color:var(--grey); font-size:13.5px; padding:8px 4px; font-style:italic;}
+
+/* Tabs */
+#tabs{
+  position:fixed; bottom:0; left:0; right:0;
+  max-width:480px; margin:0 auto;
+  display:flex; background:var(--white);
+  border-top:1px solid var(--soft-grey);
+  padding:8px 6px calc(8px + env(safe-area-inset-bottom)); z-index:10;
+}
+.tab-btn{
+  flex:1; border:none; background:transparent; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:8px 4px; color:var(--grey); font-family:var(--head); font-weight:600;
+  font-size:11px; letter-spacing:0.1em; min-height:48px;
+}
+.tab-btn svg{width:22px; height:22px;}
+.tab-btn.active{color:var(--pink);}
+
+/* Settings overlay */
+.overlay{position:fixed; inset:0; background:rgba(58,58,68,0.28); z-index:20; display:flex; align-items:flex-end; justify-content:center;}
+.overlay.hidden{display:none;}
+.sheet{
+  background:var(--white); width:100%; max-width:480px; max-height:88vh; overflow-y:auto;
+  border-radius:20px 20px 0 0; padding:20px 20px calc(24px + env(safe-area-inset-bottom));
+}
+.sheet-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;}
+.sheet-head h2{font-size:19px; letter-spacing:0.06em;}
+.close-x{width:40px; height:40px; border:none; background:var(--soft-grey); border-radius:10px; font-size:18px; cursor:pointer; color:var(--charcoal);}
+.sched-row{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:9px 0;}
+.sched-row label{font-size:14.5px; color:var(--charcoal);}
+.sched-row select{
+  font-family:var(--body); font-size:14.5px; padding:10px 12px; border-radius:10px;
+  border:1.5px solid var(--soft-grey); background:var(--near); color:var(--charcoal); min-height:44px; min-width:130px;
+}
+.io-row{display:flex; gap:10px; margin:10px 0;}
+.io-btn{flex:1; padding:12px; border:1.5px solid var(--soft-grey); background:var(--white); border-radius:12px; font-family:var(--head); font-weight:600; font-size:13px; letter-spacing:0.05em; cursor:pointer; color:var(--charcoal); min-height:48px;}
+.io-btn.primary{background:var(--soft-pink); border-color:#F3D3E1;}
+#importBox{width:100%; min-height:90px; border:1.5px solid var(--soft-grey); border-radius:12px; padding:11px; font-family:var(--body); font-size:13px; color:var(--charcoal); background:var(--near); resize:vertical;}
+.io-hint{font-size:12.5px; color:var(--grey); margin:4px 2px 2px;}
+.toggle-btn{min-width:110px; padding:10px 14px; border:1.5px solid var(--soft-grey); background:var(--near); color:var(--grey); border-radius:10px; font-family:var(--head); font-weight:600; font-size:13px; letter-spacing:0.06em; cursor:pointer; min-height:44px;}
+.toggle-btn.on{background:var(--soft-blue); border-color:var(--blue); color:var(--charcoal);}
+
+/* Affirmation card */
+.affirm-card{display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--soft-blue); border-radius:var(--radius); padding:14px 16px; margin:4px 0 14px;}
+.affirm-text{font-size:14.5px; color:var(--charcoal); font-style:italic; line-height:1.45;}
+.affirm-refresh{flex:0 0 auto; width:36px; height:36px; border:none; background:var(--white); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--grey); cursor:pointer;}
+.affirm-refresh:active{background:var(--soft-grey);}
+.affirm-refresh svg{width:18px; height:18px;}
+
+/* Quick add / extras */
+.extra-list{margin:4px 0 14px;}
+.extra-item{display:flex; align-items:center; justify-content:space-between; gap:8px; background:var(--soft-grey); border-radius:10px; padding:8px 12px; margin:6px 0; font-size:13.5px; color:var(--charcoal);}
+.extra-item .cat-tag{font-size:10.5px; letter-spacing:0.05em; text-transform:uppercase; color:var(--grey); margin-left:8px;}
+.extra-del{border:none; background:transparent; color:var(--grey); font-size:17px; cursor:pointer; padding:4px 8px; line-height:1;}
+.quickadd-row{display:flex; gap:8px; margin:8px 0; flex-wrap:wrap;}
+.quickadd-row input[type=text]{flex:1 1 140px; border:1.5px solid var(--soft-grey); border-radius:10px; padding:10px 12px; font-family:var(--body); font-size:14px; background:var(--near); color:var(--charcoal); min-height:44px;}
+.quickadd-row select{border:1.5px solid var(--soft-grey); border-radius:10px; padding:10px; font-family:var(--body); font-size:13px; background:var(--near); color:var(--charcoal); min-height:44px;}
+.add-btn{border:none; background:var(--pink); color:#fff; border-radius:10px; padding:0 16px; font-family:var(--head); font-weight:600; font-size:13px; cursor:pointer; min-height:44px;}
+
+/* Sunday workshop widget */
+.sunday-widget{border:1.5px solid var(--soft-grey); border-radius:var(--radius); padding:14px 15px; margin:10px 0; background:var(--soft-grey);}
+.ws-date-row{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:7px 0; font-size:14px; color:var(--charcoal);}
+.ws-add-row{display:flex; gap:8px; margin-top:8px;}
+.ws-add-row input[type=date]{flex:1; border:1.5px solid var(--soft-grey); border-radius:10px; padding:9px 10px; font-family:var(--body); font-size:13.5px; background:var(--white); color:var(--charcoal); min-height:44px;}
+.ws-add-row input[type=text]{flex:1; border:1.5px solid var(--soft-grey); border-radius:10px; padding:9px 10px; font-family:var(--body); font-size:13.5px; background:var(--white); color:var(--charcoal); min-height:44px;}
+
+/* Numbers: tally fields */
+.tally-field{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:10px 0 2px;}
+.tally-field .tally-val{font-size:15px; font-weight:600; color:var(--charcoal);}
+.tally-field .tally-label{font-size:13px; color:var(--grey);}
+.tally-hint{font-size:11.5px; color:var(--grey);}
+
+/* Calendar */
+.owed-banner{border-radius:var(--radius); padding:14px 16px; margin:10px 0; font-family:var(--head); font-weight:600; font-size:14.5px; text-align:center;}
+.owed-banner.owed{background:var(--soft-pink); color:var(--charcoal);}
+.owed-banner.clear{background:var(--soft-blue); color:var(--charcoal);}
+.punch-btn{width:100%; padding:20px; border:none; border-radius:var(--radius); font-family:var(--head); font-weight:700; font-size:16px; letter-spacing:0.08em; cursor:pointer; min-height:60px; margin:8px 0;}
+.punch-btn.in{background:var(--pink); color:#fff;}
+.punch-btn.out{background:var(--soft-grey); color:var(--charcoal); border:1.5px solid var(--blue);}
+.session-row{display:flex; justify-content:space-between; font-size:13px; color:var(--grey); padding:6px 2px;}
+.hours-total{font-size:14px; color:var(--charcoal); text-align:center; margin:6px 0;}
+
+.day-card{border:1.5px solid var(--soft-grey); border-radius:var(--radius); padding:13px 14px; margin:10px 0;}
+.day-card-head{display:flex; align-items:center; justify-content:space-between;}
+.day-card-title{font-family:var(--head); font-weight:600; font-size:14.5px;}
+.day-card-date{font-size:12px; color:var(--grey);}
+.chip{display:flex; align-items:center; justify-content:space-between; gap:8px; border-radius:10px; padding:9px 11px; margin:7px 0; font-size:13px;}
+.chip.cat-content{background:var(--soft-yellow); border:1px solid #E7D89A;}
+.chip.cat-sales{background:var(--soft-green); border:1px solid #A9D3B0;}
+.chip.cat-delivery{background:var(--soft-blue); border:1px solid #BFE0F2;}
+.chip.cat-admin{background:var(--soft-grey); border:1px solid #D8D8DE;}
+.chip.cat-personal{background:var(--soft-pink); border:1px solid #F3D3E1;}
+.chip-info{display:flex; flex-direction:column;}
+.chip-label{font-weight:500; color:var(--charcoal);}
+.chip-time{font-size:11.5px; color:var(--grey);}
+.chip-actions{display:flex; align-items:center; gap:6px; flex:0 0 auto;}
+.chip-gcal, .chip-del{border:none; background:rgba(255,255,255,0.6); width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--charcoal); text-decoration:none; cursor:pointer;}
+.chip-gcal svg{width:15px; height:15px;}
+.add-block-btn{width:100%; margin-top:6px; padding:9px; border:1.5px dashed var(--soft-grey); background:transparent; border-radius:10px; color:var(--grey); font-family:var(--body); font-size:13px; cursor:pointer; min-height:40px;}
+.block-form{margin-top:8px; padding:10px; background:var(--near); border-radius:10px;}
+.block-form-row{display:flex; gap:8px; margin:6px 0;}
+.block-form input, .block-form select{flex:1; border:1.5px solid var(--soft-grey); border-radius:8px; padding:8px 9px; font-size:13px; font-family:var(--body); background:var(--white); color:var(--charcoal); min-height:40px;}
+
+/* Settings: duty editor / mode toggle / weekly focus */
+.duty-editor-row{display:flex; align-items:center; gap:8px; margin:6px 0;}
+.duty-editor-row input[type=text]{flex:1; border:1.5px solid var(--soft-grey); border-radius:10px; padding:9px 11px; font-size:13.5px; font-family:var(--body); background:var(--near); color:var(--charcoal); min-height:44px;}
+.mode-toggle-row{display:flex; gap:8px; margin:8px 0 14px;}
+.mode-btn{flex:1; padding:11px; border:1.5px solid var(--soft-grey); background:var(--white); border-radius:12px; font-family:var(--head); font-weight:600; font-size:13px; letter-spacing:0.05em; cursor:pointer; color:var(--grey); min-height:44px;}
+.mode-btn.active{background:var(--soft-pink); border-color:#F3D3E1; color:var(--charcoal);}
+.focus-row{border:1px solid var(--soft-grey); border-radius:12px; padding:10px 12px; margin:8px 0;}
+.focus-row-head{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px; color:var(--charcoal); font-size:14px;}
+.focus-row select{font-family:var(--body); font-size:13.5px; padding:8px 10px; border-radius:8px; border:1.5px solid var(--soft-grey); background:var(--near); color:var(--charcoal); min-height:40px;}
+.focus-row textarea{width:100%; border:1.5px solid var(--soft-grey); border-radius:8px; padding:8px 10px; font-family:var(--body); font-size:13px; background:var(--white); color:var(--charcoal); resize:vertical; min-height:44px;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <span class="wordmark">THE LADDER</span>
+    <button id="gear" aria-label="Settings">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+    </button>
+  </header>
+  <main id="view"></main>
+  <nav id="tabs">
+    <button class="tab-btn" data-tab="today">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+      TODAY
+    </button>
+    <button class="tab-btn" data-tab="ladder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v18M16 3v18M8 7h8M8 12h8M8 17h8"></path></svg>
+      LADDER
+    </button>
+    <button class="tab-btn" data-tab="numbers">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>
+      NUMBERS
+    </button>
+    <button class="tab-btn" data-tab="calendar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg>
+      CALENDAR
+    </button>
+  </nav>
+</div>
+
+<div id="settings" class="overlay hidden">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2>SETTINGS</h2>
+      <button class="close-x" id="closeSettings" aria-label="Close">&times;</button>
+    </div>
+    <div id="settingsBody"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const KEY = "THE_LADDER_v1";
+
+/* ---------- Data ---------- */
+const SHORT = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const FULL  = {Sun:"Sunday",Mon:"Monday",Tue:"Tuesday",Wed:"Wednesday",Thu:"Thursday",Fri:"Friday",Sat:"Saturday"};
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+const OFF_DUTY = [
+  {id:"off1", text:"Publish the story draft (5 min)"},
+  {id:"off2", text:"Confirm scheduled video and email went out (5 min)"}
+];
+
+const ROLE_META = {
+  workshop:{name:"Workshop Day"},
+  salescall:{name:"Sales Call Day"},
+  delivery:{name:"Delivery Day"},
+  batch:{name:"Batch Day"},
+  intake:{name:"Intake Day"},
+  review:{name:"Review + Planning"},
+  off:{name:"Off Day"},
+  custom:{name:"Custom"}
+};
+const ROLE_DEFAULT_LABEL = {
+  review:"REVIEW + PLANNING DAY: read last week's scorecard, set this week's business hours, enter any workshop date (30 min)",
+  workshop:"WORKSHOP DAY: deliver the paid workshop, pitch interest calls from the stage",
+  salescall:"SALES CALL DAY: all sales calls happen today, riding yesterday's workshop momentum",
+  delivery:"DELIVERY DAY: client delivery calls only. No sales calls book here",
+  batch:"BATCH DAY: batch next week's videos, stories, emails in one session. Plus intake calls (20 min each)",
+  intake:"INTAKE DAY: work intake calls (20 min each)",
+  off:"",
+  custom:""
+};
+
+const CATEGORIES = [
+  {key:"content", label:"Content"},
+  {key:"sales", label:"Sales"},
+  {key:"delivery", label:"Delivery"},
+  {key:"admin", label:"Admin"},
+  {key:"personal", label:"Personal"}
+];
+
+const AFFIRMATIONS = [
+  "The boring work is the work.",
+  "One call at a time is how it happens.",
+  "Small and steady beats loud and gone by Tuesday.",
+  "You do not have to feel ready to be ready.",
+  "The list gets done in order, not all at once.",
+  "Today only asks for today's list.",
+  "Consistency is the whole strategy.",
+  "You built this with ordinary days, not big ones.",
+  "The plan is simple on purpose.",
+  "Showing up again is the skill.",
+  "Nobody sees the days that add up. You will.",
+  "The email still goes out on the hard days.",
+  "Proof comes from repetition, not inspiration.",
+  "This is a business, not a mood.",
+  "You are allowed to do this slowly and still get there.",
+  "The system works even on the days you do not feel it.",
+  "Progress is quiet most of the time.",
+  "One honest month tells you more than a good week.",
+  "You do not need a sign. The numbers are the sign.",
+  "The work you did not want to do today still counted.",
+  "A finished ordinary day beats a perfect one you skipped.",
+  "You are building toward a Tuesday morning that belongs to you.",
+  "The machine does not need you to be excited. It needs you to show up.",
+  "Every call booked is a door someone else opened for themselves.",
+  "You do not owe anyone a bigger version of this today.",
+  "The list is short because short things get finished.",
+  "This is what leaving looks like before it looks like anything.",
+  "Some days the win is just that you logged the numbers.",
+  "You are allowed to close the laptop when the list is done.",
+  "The version of you with the classroom behind her is still watching. Keep going."
+];
+
+const CEIL = {1:1000, 2:3500, 3:7000, 4:12000, 5:null};
+
+const LEVELS = [
+  {n:1, name:"Side Hustle Babe", band:"$0 to $1K/month",
+   job:"Close the first 3 Intensives at $997 and deliver them beautifully. Get the evergreen floor live.",
+   gate:"3 Intensive closes plus the funnel producing daily income. 3 months at $1K+ fills the meter.",
+   life:"The business is real. Proof exists.",
+   demotion:"Tinkering instead of selling.",
+   rhythm:"Mon heavy batch (workshop + content), Wed workshop, Thu replay emails, Fri numbers, daily 60-minute block."},
+  {n:2, name:"Side Business Chic", band:"$1K to $3.5K/month",
+   job:"Repeatability. Same machine every week, no redesigns. Weekly workshop, weekly calls, daily emails.",
+   gate:"3 consecutive months at $3,500 or more.",
+   life:"$3,500 held for 3 months is the move-out number. Promotion from this level means your own place.",
+   demotion:"One good month, two dead ones. Consistency is the test.",
+   rhythm:"identical to Level 1, plus one case study captured per delivered Intensive."},
+  {n:3, name:"Boss Babe", band:"$3.5K to $7K/month",
+   job:"Price rises to $1,997, earned by proof. 2 to 3 Intensives a month. Case studies stacking.",
+   gate:"3 consecutive months at $7K or more, 6 documented case studies, and the machine held through at least one low-energy week.",
+   life:"Business income passes teaching income. Teaching becomes a choice.",
+   demotion:"Burnout from doing volume by hand instead of by system.",
+   rhythm:"Level 1 rhythm plus delegation prep: document one process per week."},
+  {n:4, name:"Full-Time Boss", band:"$7K to $12K/month",
+   job:"The exit. Savings floor hit, resignation letter written, first paid help hired.",
+   gate:"3 consecutive months at $12K or more, savings floor banked, one person reliably taking work off your plate.",
+   life:"You resign. Kaidence watches her mother leave a government job for her own company.",
+   demotion:"Hiring too early, or resigning before the savings floor is real.",
+   rhythm:"daily block shrinks, weekly team check-in added, Fri numbers stays forever."},
+  {n:5, name:"Expert Boss", band:"$12K to $25K+/month",
+   job:"Vision and direction. Systems and people run the days. You run the company.",
+   gate:"This is the crown. $25K/month is $300K a year. Multi-six figures.",
+   life:"The 5-years-or-less target, achieved.",
+   demotion:"Forgetting the boring machine that built it.",
+   rhythm:"strategy, brand, and what comes next."}
+];
+
+/* ---------- State ---------- */
+function defaultDayRoles(){
+  return {
+    Sun:{role:"review", label:"REVIEW + PLANNING DAY: read last week's scorecard, set this week's business hours, enter any workshop date (30 min)"},
+    Mon:{role:"workshop", label:"WORKSHOP DAY: deliver the paid workshop, pitch interest calls from the stage"},
+    Tue:{role:"salescall", label:"SALES CALL DAY: all sales calls happen today, riding yesterday's workshop momentum"},
+    Wed:{role:"delivery", label:"DELIVERY DAY: client delivery calls only. No sales calls book here"},
+    Thu:{role:"batch", label:"BATCH DAY: batch next week's videos, stories, emails in one session. Plus intake calls (20 min each)"},
+    Fri:{role:"off", label:""},
+    Sat:{role:"off", label:""}
+  };
+}
+function defaultDutyLists(){
+  return {
+    break:[
+      {id:"brk1", text:"Post today's batched tutorial video on Instagram (5 min)"},
+      {id:"brk2", text:"Post today's story pushing the freebie (5 min)"},
+      {id:"brk3", text:"Confirm today's scheduled email went out (2 min)"},
+      {id:"brk4", text:"One Threads post, maintenance only (5 min)"},
+      {id:"brk5", text:"Work new DMs and move open threads one step forward (20 min)"},
+      {id:"brk6", text:"Fill the daily quick-log (2 min)"}
+    ],
+    school:[
+      {id:"sch1", text:"Confirm today's scheduled email went out (2 min)"},
+      {id:"sch2", text:"Work new DMs (15 min)"},
+      {id:"sch3", text:"Follow up open DM threads (10 min)"},
+      {id:"sch4", text:"Follow up any email replies (10 min)"},
+      {id:"sch5", text:"Fill the daily quick-log (2 min)"}
+    ]
+  };
+}
+function defaultState(){
+  return {
+    lastOpenedDate:null,
+    badWeek:false,
+    checks:{},
+    schedule:{heavy:"Mon", promo:"Tue", workshop:"Wed", followup:"Thu", numbers:"Fri", light:"Sat", off:"Sun"},
+    intensivesClosed:false,
+    months:{},
+    weeks:{},
+    activeTab:"today",
+    expandedLevel:null,
+    darkMode:false,
+    dutyMode:"break",
+    dutyLists:defaultDutyLists(),
+    dayRoles:defaultDayRoles(),
+    workshopDates:[],
+    adsEnabled:false,
+    quickLog:{},
+    businessHours:{},
+    punchSessions:{},
+    weeklyPlanner:{},
+    openBlockForm:null,
+    affirmationIndex:null,
+    affirmationDate:null
+  };
+}
+function applyTheme(){
+  document.documentElement.setAttribute("data-theme", state.darkMode ? "dark" : "light");
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content", state.darkMode ? "#1a1a1f" : "#E89BBE");
+}
+let state = load();
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return defaultState();
+    const parsed = JSON.parse(raw);
+    return Object.assign(defaultState(), parsed);
+  }catch(e){ return defaultState(); }
+}
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+
+/* ---------- Date helpers ---------- */
+function pad(n){ return n<10 ? "0"+n : ""+n; }
+function ymd(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function todayDate(){ const d=new Date(); d.setHours(0,0,0,0); return d; }
+function longDate(d){ return FULL[SHORT[d.getDay()]] + ", " + MONTHS[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear(); }
+function shortDate(d){ return MONTHS[d.getMonth()].slice(0,3) + " " + d.getDate() + ", " + d.getFullYear(); }
+function weekStartOf(d){ // Sunday-based week start
+  const c = new Date(d); c.setHours(0,0,0,0);
+  c.setDate(c.getDate() - c.getDay());
+  return c;
+}
+const WEEK_START = new Date(2026,6,12); // Sunday July 12, 2026
+const MONTH_START = {y:2026, m:6};      // July 2026 (0-indexed month)
+
+function recentWeeks(count){
+  const cur = weekStartOf(todayDate());
+  const weeks = [];
+  let w = new Date(WEEK_START);
+  if(cur < w){ weeks.push(new Date(w)); }
+  else{
+    while(w <= cur){ weeks.push(new Date(w)); w.setDate(w.getDate()+7); }
+  }
+  return weeks.slice(-count);
+}
+function allMonths(){
+  const out = [];
+  const now = todayDate();
+  let y = MONTH_START.y, m = MONTH_START.m;
+  const endY = now.getFullYear(), endM = now.getMonth();
+  while(y < endY || (y===endY && m<=endM)){
+    out.push({key:y+"-"+pad(m+1), label:MONTHS[m]+" "+y});
+    m++; if(m>11){ m=0; y++; }
+    if(out.length>240) break;
+  }
+  return out;
+}
+function parseYmd(s){ const p=s.split("-").map(Number); return new Date(p[0], p[1]-1, p[2]); }
+function num(v){ return parseFloat(v)||0; }
+function weekKeyFor(d){ return ymd(weekStartOf(d)); }
+function todayYmd(){ return ymd(todayDate()); }
+function minToHM(mins){ mins = Math.max(0, Math.round(mins)); const h=Math.floor(mins/60), m=mins%60; return h+"h "+(m<10?"0":"")+m+"m"; }
+function timeStr(ms){ const d=new Date(ms); return pad(d.getHours())+":"+pad(d.getMinutes()); }
+function trimNum(n){ return (Math.round(n*10)/10).toString(); }
+
+function weeklyTally(weekStartDate){
+  const totals = {booked:0, held:0, closes:0, revenue:0, subs:0, dms:0};
+  for(let i=0;i<7;i++){
+    const d = new Date(weekStartDate); d.setDate(d.getDate()+i);
+    const q = state.quickLog[ymd(d)];
+    if(!q) continue;
+    totals.booked += num(q.booked); totals.held += num(q.held); totals.closes += num(q.closes);
+    totals.revenue += num(q.revenue); totals.subs += num(q.subs); totals.dms += num(q.dms);
+  }
+  return totals;
+}
+function effectiveWeekField(wk, weekDate, field){
+  const w = state.weeks[wk] || {};
+  if(w[field] != null && w[field] !== "") return num(w[field]);
+  return weeklyTally(weekDate)[field];
+}
+function allRelevantWeekKeys(){
+  const set = new Set(Object.keys(state.weeks));
+  for(const dk in state.quickLog){
+    set.add(ymd(weekStartOf(parseYmd(dk))));
+  }
+  return Array.from(set);
+}
+function totalsAllTime(){
+  let totalHeld=0, totalCloses=0;
+  for(const wk of allRelevantWeekKeys()){
+    const weekDate = parseYmd(wk);
+    totalHeld += effectiveWeekField(wk, weekDate, "held");
+    totalCloses += effectiveWeekField(wk, weekDate, "closes");
+  }
+  return {totalHeld, totalCloses};
+}
+
+function actualMinutesForDate(dYmd){
+  const sessions = state.punchSessions[dYmd] || [];
+  let total=0;
+  for(const s of sessions){ total += ((s.out || Date.now()) - s.in) / 60000; }
+  return total;
+}
+function computeHoursOwed(){
+  const t = todayDate();
+  const wk = weekKeyFor(t);
+  const bh = state.businessHours[wk] || {};
+  const start = weekStartOf(t);
+  let plannedMin=0, actualMin=0;
+  for(let i=0; i<=t.getDay(); i++){
+    const d = new Date(start); d.setDate(d.getDate()+i);
+    const short = SHORT[d.getDay()];
+    plannedMin += num(bh[short])*60;
+    actualMin += actualMinutesForDate(ymd(d));
+  }
+  const owedMin = Math.max(0, plannedMin - actualMin);
+  return {owedHours: owedMin/60};
+}
+function gcalUrl(dateObj, block){
+  const parts = block.start.split(":").map(Number);
+  const startDt = new Date(dateObj); startDt.setHours(parts[0], parts[1], 0, 0);
+  const endDt = new Date(startDt.getTime() + num(block.duration)*60000);
+  const fmt = d => d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"T"+pad(d.getHours())+pad(d.getMinutes())+"00";
+  const params = new URLSearchParams({
+    action:"TEMPLATE",
+    text: block.label || "Block",
+    dates: fmt(startDt)+"/"+fmt(endDt)
+  });
+  return "https://calendar.google.com/calendar/render?"+params.toString();
+}
+
+/* ---------- Ladder computation ---------- */
+function computeLadder(){
+  const keys = Object.keys(state.months).filter(k=>{
+    const r = state.months[k];
+    return r && r.revenue !== "" && r.revenue != null && !isNaN(parseFloat(r.revenue));
+  }).sort();
+  let level=1, streak=0, justReset=false;
+  const completed=[];
+  for(const k of keys){
+    if(level>=5) break;
+    const rev = parseFloat(state.months[k].revenue)||0;
+    const ceil = CEIL[level];
+    if(rev >= ceil){
+      streak++; justReset=false;
+      if(streak>=3){
+        if(level===1 && !state.intensivesClosed){
+          streak=3; // held, waiting on the manual gate
+        }else{
+          completed.push(level); level++; streak=0;
+        }
+      }
+    }else{
+      if(streak>0) justReset=true;
+      streak=0;
+    }
+  }
+  return {level, streak, justReset, completed};
+}
+
+/* ---------- Icons ---------- */
+const CHK = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg>';
+const LOCK = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+const CHECKMARK = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg>';
+const CHEV_D = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+const CHEV_U = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>';
+const REFRESH_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>';
+const CAL_ICON_SM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>';
+
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+/* ---------- Day rollover ---------- */
+function checkRollover(){
+  const t = ymd(todayDate());
+  if(state.lastOpenedDate !== t){
+    state.checks = {};
+    state.lastOpenedDate = t;
+    save();
+  }
+}
+
+/* ---------- Render: TODAY ---------- */
+function dayOfYear(d){
+  const start = new Date(d.getFullYear(),0,0);
+  return Math.floor((d - start) / 86400000);
+}
+function currentAffirmationIndex(){
+  const t = todayYmd();
+  if(state.affirmationDate !== t || state.affirmationIndex == null){
+    state.affirmationIndex = dayOfYear(todayDate()) % AFFIRMATIONS.length;
+    state.affirmationDate = t;
+    save();
+  }
+  return state.affirmationIndex;
+}
+
+function buildTodayData(){
+  const t = todayDate();
+  const dShort = SHORT[t.getDay()];
+  const tYmd = ymd(t);
+  const roleInfo = state.dayRoles[dShort] || {role:"off", label:""};
+  const isWorkshopDateToday = state.workshopDates.indexOf(tYmd) >= 0;
+
+  // follow-up windows are time-critical, so they are computed regardless of off-day status
+  const followUps = [];
+  for(const wsd of state.workshopDates){
+    const wd = parseYmd(wsd);
+    const diffDays = Math.round((t - wd)/86400000);
+    if(diffDays>=1 && diffDays<=3){
+      followUps.push({id:"followup_"+wsd, text:"FOLLOW-UP WINDOW: send the buyer follow-up sequence within 72 hours ("+diffDays+" of 3)"});
+    }
+  }
+
+  const isOffDay = (roleInfo.role === "off") && !isWorkshopDateToday;
+  if(isOffDay){
+    return {isOffDay:true, dShort, followUps};
+  }
+
+  const modeList = state.dutyLists[state.dutyMode] || [];
+  const items = state.badWeek ? modeList.slice(0,3) : modeList.slice();
+
+  let roleItem = null;
+  if(isWorkshopDateToday && roleInfo.role !== "workshop"){
+    roleItem = {id:"role_workshop_forced", tint:true, text: ROLE_DEFAULT_LABEL.workshop};
+  }else if(roleInfo.role !== "off" && roleInfo.label){
+    roleItem = {id:"role_"+dShort, tint: roleInfo.role==="workshop", text: roleInfo.label};
+  }
+
+  return {isOffDay:false, dShort, roleItem, items, followUps};
+}
+
+function dutyRowHtml(it, on){
+  return '<div class="duty '+(it.tint?'tint-pink':'')+' '+(on?'checked':'')+'" data-check="'+it.id+'">'
+       + '<span class="checkbox">'+CHK+'</span>'
+       + '<span class="duty-text">'+esc(it.text)+'</span></div>';
+}
+
+function renderSundayWorkshopWidget(){
+  let html = '<div class="sunday-widget"><div class="wf-label">Workshop dates</div>';
+  const sorted = state.workshopDates.slice().sort();
+  if(sorted.length===0){
+    html += '<div class="empty-note">None scheduled yet.</div>';
+  }else{
+    for(const wd of sorted){
+      html += '<div class="ws-date-row"><span>'+esc(shortDate(parseYmd(wd)))+'</span>'
+            + '<button class="extra-del" data-ws-del-today="'+wd+'">&times;</button></div>';
+    }
+  }
+  html += '<div class="ws-add-row"><input type="date" id="wsDateInputToday"><button class="add-btn" data-ws-add-today>ADD</button></div>';
+  html += '</div>';
+  return html;
+}
+
+function renderQuickLog(tYmd){
+  const q = state.quickLog[tYmd] || {};
+  const fields = [
+    {k:"booked", label:"Calls booked"},
+    {k:"held", label:"Calls held"},
+    {k:"closes", label:"Closes"},
+    {k:"revenue", label:"Revenue ($)"},
+    {k:"subs", label:"New subscribers"},
+    {k:"dms", label:"DM conversations"}
+  ];
+  let html = '<div class="section-title">Daily quick log</div><div class="week-form" data-quicklog="'+tYmd+'">';
+  for(const f of fields){
+    const val = q[f.k]!=null ? q[f.k] : 0;
+    html += '<div class="field-row"><label>'+esc(f.label)+'</label>'
+          + '<input type="number" inputmode="decimal" data-qfield="'+f.k+'" value="'+esc(val)+'"></div>';
+  }
+  html += '<button class="save-btn" data-save-quicklog="'+tYmd+'">SAVE LOG</button>';
+  html += '</div>';
+  return html;
+}
+
+function renderQuickAdd(tYmd){
+  const q = state.quickLog[tYmd] || {};
+  const extras = q.extra || [];
+  let html = '<div class="section-title">Add something else</div>';
+  html += '<div class="quickadd-row"><input type="text" id="qaText" placeholder="What did you work on">'
+        + '<select id="qaCategory">';
+  for(const c of CATEGORIES){ html += '<option value="'+c.key+'">'+c.label+'</option>'; }
+  html += '</select><button class="add-btn" data-qa-add="'+tYmd+'">ADD</button></div>';
+  if(extras.length){
+    html += '<div class="extra-list">';
+    extras.forEach((ex,idx)=>{
+      html += '<div class="extra-item"><span>'+esc(ex.text)+'<span class="cat-tag">'+esc(ex.category)+'</span></span>'
+            + '<button class="extra-del" data-qa-del="'+tYmd+'|'+idx+'">&times;</button></div>';
+    });
+    html += '</div>';
+  }
+  return html;
+}
+
+function renderToday(){
+  const lad = computeLadder();
+  const levelName = LEVELS[lad.level-1].name;
+  const t = todayDate();
+  const tYmd = ymd(t);
+  let html = "";
+  html += '<div class="today-date">'+esc(longDate(t))+'</div>';
+  html += '<div class="today-heading"><span class="level-badge">'+esc(levelName)+(state.badWeek?'<span class="dot"></span>':'')+'</span></div>';
+
+  html += '<div class="affirm-card"><span class="affirm-text">'+esc(AFFIRMATIONS[currentAffirmationIndex()])+'</span>'
+        + '<button class="affirm-refresh" id="affirmRefresh" aria-label="Next affirmation">'+REFRESH_ICON+'</button></div>';
+
+  html += '<button class="badweek-btn '+(state.badWeek?'on':'')+'" id="badWeekBtn"><span>Bad Week Mode</span><span class="state">'+(state.badWeek?'ON':'OFF')+'</span></button>';
+
+  const data = buildTodayData();
+  let allChecked = true, anyCheckable = false;
+
+  if(data.isOffDay){
+    for(const fu of data.followUps){
+      const on = !!state.checks[fu.id];
+      anyCheckable = true; if(!on) allChecked=false;
+      html += dutyRowHtml(fu, on);
+    }
+    for(const it of OFF_DUTY){
+      const on = !!state.checks[it.id];
+      anyCheckable = true; if(!on) allChecked=false;
+      html += dutyRowHtml(it, on);
+    }
+    html += '<div class="grey-note">That\'s it. You\'re off.</div>';
+  }else{
+    if(data.roleItem){
+      const on = !!state.checks[data.roleItem.id];
+      anyCheckable = true; if(!on) allChecked=false;
+      html += dutyRowHtml(data.roleItem, on);
+    }
+    for(const fu of data.followUps){
+      const on = !!state.checks[fu.id];
+      anyCheckable = true; if(!on) allChecked=false;
+      html += dutyRowHtml(fu, on);
+    }
+    for(const it of data.items){
+      const on = !!state.checks[it.id];
+      anyCheckable = true; if(!on) allChecked=false;
+      html += dutyRowHtml(it, on);
+    }
+    if(state.badWeek){
+      html += '<div class="soft-note">This is a full day\'s work on a bad week. Anything more is bonus.</div>';
+    }
+  }
+
+  if(data.dShort==="Sun"){
+    html += renderSundayWorkshopWidget();
+  }
+
+  if(anyCheckable && allChecked){
+    html += '<div class="done-line">Done. Close the app.</div>';
+  }
+
+  html += renderQuickLog(tYmd);
+  html += renderQuickAdd(tYmd);
+
+  document.getElementById("view").innerHTML = html;
+}
+
+/* ---------- Render: LADDER ---------- */
+function renderLadder(){
+  const lad = computeLadder();
+  let html = "";
+  // top of screen = highest level -> iterate 5..1
+  for(let i=LEVELS.length-1; i>=0; i--){
+    const L = LEVELS[i];
+    const isCurrent = (L.n===lad.level);
+    const isDone = lad.completed.indexOf(L.n)>=0;
+    const isLocked = (L.n>lad.level);
+    const expanded = (state.expandedLevel===L.n);
+    let cls = "ladder-card";
+    if(isCurrent) cls+=" current";
+    if(isDone) cls+=" done";
+    if(isLocked) cls+=" locked";
+
+    let nameExtra = "";
+    if(isDone) nameExtra = '<span class="check-mark">'+CHECKMARK+'</span>';
+    else if(isLocked) nameExtra = '<span class="check-mark">'+LOCK+'</span>';
+
+    html += '<div class="'+cls+'">';
+    html += '<div class="ladder-head" data-level="'+L.n+'">'
+          + '<div class="titles"><div class="ladder-name">'+esc(L.name)+nameExtra+'</div>'
+          + '<div class="ladder-band">'+esc(L.band)+'</div></div>'
+          + '<span class="ladder-icon">'+(expanded?CHEV_U:CHEV_D)+'</span></div>';
+
+    if(expanded){
+      html += '<div class="ladder-body">';
+      html += lblBlock("Your job", L.job);
+      html += lblBlock("Promotion gate", L.gate);
+      html += lblBlock("Life milestone", L.life);
+      html += lblBlock("Demotion risk", L.demotion);
+      html += lblBlock("Weekly rhythm", L.rhythm);
+      if(isCurrent && L.n<5){
+        html += renderMeter(lad, L.n);
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  html += '<div class="ladder-footer">Promoted by proof, not by time. Demoted by trend, not by one bad month.</div>';
+  document.getElementById("view").innerHTML = html;
+}
+function lblBlock(title, text){
+  return '<div class="lbl-block"><div class="lbl-title">'+esc(title)+'</div><div class="lbl-text">'+esc(text)+'</div></div>';
+}
+function renderMeter(lad, level){
+  let html = '<div class="meter"><div class="meter-title">Promotion Meter</div><div class="slots">';
+  for(let s=1;s<=3;s++){
+    const filled = lad.streak>=s;
+    html += '<div class="slot '+(filled?'filled':'')+'"><span class="slot-circle"></span><span class="slot-label">Month '+s+'</span></div>';
+  }
+  html += '</div>';
+  if(lad.justReset){
+    html += '<div class="meter-msg reset">Streak reset. The ladder does not lie.</div>';
+  }else if(lad.streak>=3 && level===1 && !state.intensivesClosed){
+    html += '<div class="meter-msg">Meter full. Confirm your 3 Intensives to promote.</div>';
+  }
+  if(level===1){
+    html += '<div class="gate-check '+(state.intensivesClosed?'checked':'')+'" id="intensivesGate">'
+          + '<span class="checkbox">'+CHK+'</span><span class="gc-text">3 Intensives closed</span></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+/* ---------- Render: NUMBERS ---------- */
+function renderNumbers(){
+  const {totalHeld, totalCloses} = totalsAllTime();
+  let html = "";
+  if(totalHeld>=10){
+    const rate = Math.round((totalCloses/totalHeld)*100);
+    html += '<div class="closerate">Close rate: '+rate+'%</div>';
+  }else{
+    html += '<div class="closerate">Close rate unlocks after 10 calls held.</div>';
+  }
+
+  html += '<div class="section-title">Weekly scorecard</div>';
+  const weeks = recentWeeks(6).slice().reverse(); // newest first
+  const tallyFields = [
+    {k:"booked", label:"Calls booked"},
+    {k:"held", label:"Calls held"},
+    {k:"closes", label:"Closes"},
+    {k:"revenue", label:"Revenue ($)"},
+    {k:"subs", label:"New subscribers"}
+  ];
+  const manualFields = [
+    {k:"optins", label:"Opt-ins from Instagram"},
+    {k:"openrate", label:"Email open rate (%)"},
+    {k:"clicks", label:"Story link clicks"}
+  ];
+  const adsFields = [
+    {k:"adspend", label:"Ad spend ($)"},
+    {k:"adleads", label:"Leads from ads"}
+  ];
+  for(const wd of weeks){
+    const wk = ymd(wd);
+    const w = state.weeks[wk] || {};
+    const tally = weeklyTally(wd);
+    html += '<div class="week-form" data-week="'+wk+'">';
+    html += '<div class="wf-label">Week of '+esc(shortDate(wd))+'</div>';
+    for(const f of tallyFields){
+      html += '<div class="tally-field"><span class="tally-label">'+esc(f.label)+'</span><span class="tally-val">'+tally[f.k]+'</span></div>';
+      const overrideVal = (w[f.k]!=null && w[f.k]!=="") ? w[f.k] : "";
+      html += '<div class="field-row"><label class="tally-hint">Override (optional)</label>'
+            + '<input type="number" inputmode="decimal" data-field="'+f.k+'" value="'+esc(overrideVal)+'"></div>';
+    }
+    for(const f of manualFields){
+      const val = (w[f.k]!=null?w[f.k]:"");
+      html += '<div class="field-row"><label>'+esc(f.label)+'</label>'
+            + '<input type="number" inputmode="decimal" data-field="'+f.k+'" value="'+esc(val)+'"></div>';
+    }
+    if(state.adsEnabled){
+      for(const f of adsFields){
+        const val = (w[f.k]!=null?w[f.k]:"");
+        html += '<div class="field-row"><label>'+esc(f.label)+'</label>'
+              + '<input type="number" inputmode="decimal" data-field="'+f.k+'" value="'+esc(val)+'"></div>';
+      }
+      const spend = num(w.adspend), leads = num(w.adleads);
+      const cpl = leads>0 ? ("$"+(spend/leads).toFixed(2)) : "-";
+      html += '<div class="tally-field"><span class="tally-label">Cost per lead</span><span class="tally-val">'+cpl+'</span></div>';
+    }
+    html += '<button class="save-btn" data-save-week="'+wk+'">SAVE WEEK</button>';
+    html += '</div>';
+  }
+
+  // table of last 6 weeks
+  html += '<div class="section-title">Last 6 weeks</div>';
+  html += '<div style="overflow-x:auto"><table class="scoretable"><thead><tr>'
+        + '<th>Week</th><th>Bkd</th><th>Held</th><th>Cls</th><th>Rev</th><th>Subs</th><th>Opt</th><th>Open%</th><th>Clk</th>'
+        + (state.adsEnabled ? '<th>Spd</th><th>Lds</th><th>CPL</th>' : '')
+        + '</tr></thead><tbody>';
+  let any=false;
+  for(const wd of weeks){
+    const wk = ymd(wd);
+    const w = state.weeks[wk];
+    const tally = weeklyTally(wd);
+    const hasQuickLog = tally.booked || tally.held || tally.closes || tally.revenue || tally.subs;
+    if(!w && !hasQuickLog) continue;
+    any=true;
+    html += '<tr><td>'+esc(shortDate(wd))+'</td>'
+          + '<td>'+effectiveWeekField(wk, wd, "booked")+'</td><td>'+effectiveWeekField(wk, wd, "held")+'</td><td>'+effectiveWeekField(wk, wd, "closes")+'</td>'
+          + '<td>'+effectiveWeekField(wk, wd, "revenue")+'</td><td>'+effectiveWeekField(wk, wd, "subs")+'</td>'
+          + '<td>'+cell(w&&w.optins)+'</td><td>'+cell(w&&w.openrate)+'</td><td>'+cell(w&&w.clicks)+'</td>';
+    if(state.adsEnabled){
+      const spend=num(w&&w.adspend), leads=num(w&&w.adleads);
+      const cpl = leads>0 ? ("$"+(spend/leads).toFixed(2)) : "-";
+      html += '<td>'+cell(w&&w.adspend)+'</td><td>'+cell(w&&w.adleads)+'</td><td>'+cpl+'</td>';
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table></div>';
+  if(!any) html += '<div class="empty-note">No weeks saved yet.</div>';
+
+  // monthly log
+  html += '<div class="section-title">Monthly log</div>';
+  const months = allMonths().slice().reverse();
+  for(const mo of months){
+    const m = state.months[mo.key] || {};
+    html += '<div class="month-form" data-month="'+mo.key+'">';
+    html += '<div class="wf-label">'+esc(mo.label)+'</div>';
+    html += '<div class="field-row"><label>Revenue ($)</label>'
+          + '<input type="number" inputmode="decimal" data-mfield="revenue" value="'+esc(m.revenue!=null?m.revenue:"")+'"></div>';
+    html += '<input class="sentence" type="text" data-mfield="note" placeholder="One honest sentence about this month." value="'+esc(m.note!=null?m.note:"")+'">';
+    html += '<button class="save-btn" data-save-month="'+mo.key+'">SAVE MONTH</button>';
+    html += '</div>';
+  }
+
+  document.getElementById("view").innerHTML = html;
+}
+function cell(v){ return (v==null||v==="") ? "0" : esc(v); }
+
+/* ---------- Render: CALENDAR ---------- */
+function renderCalendar(){
+  const t = todayDate();
+  const wk = weekKeyFor(t);
+  const weekStart = weekStartOf(t);
+  const bh = state.businessHours[wk] || {};
+
+  let html = "";
+  html += '<div class="section-title">Business hours (this week)</div>';
+  html += '<div class="week-form" data-hours-form>';
+  for(const day of SHORT){
+    const val = bh[day]!=null ? bh[day] : "";
+    html += '<div class="field-row"><label>'+FULL[day]+'</label>'
+          + '<input type="number" step="0.5" inputmode="decimal" data-hours-day="'+day+'" value="'+esc(val)+'"></div>';
+  }
+  html += '<button class="save-btn" data-save-hours>SAVE HOURS</button>';
+  html += '</div>';
+
+  html += '<div class="section-title">Punch clock</div>';
+  const tYmd = ymd(t);
+  const sessions = state.punchSessions[tYmd] || [];
+  const isIn = sessions.length>0 && sessions[sessions.length-1].out==null;
+  html += '<button class="punch-btn '+(isIn?"out":"in")+'" data-punch-toggle>'+(isIn?"PUNCH OUT":"PUNCH IN")+'</button>';
+  const actualMin = actualMinutesForDate(tYmd);
+  const plannedMin = num(bh[SHORT[t.getDay()]])*60;
+  html += '<div class="hours-total">Today: '+minToHM(actualMin)+' worked / '+minToHM(plannedMin)+' planned</div>';
+  for(const s of sessions){
+    const durMin = ((s.out||Date.now()) - s.in)/60000;
+    html += '<div class="session-row"><span>'+timeStr(s.in)+' to '+(s.out?timeStr(s.out):"now")+'</span><span>'+minToHM(durMin)+'</span></div>';
+  }
+
+  const owed = computeHoursOwed();
+  if(owed.owedHours>0.01){
+    html += '<div class="owed-banner owed">You owe '+trimNum(owed.owedHours)+'h this week</div>';
+  }else{
+    html += '<div class="owed-banner clear">On schedule</div>';
+  }
+
+  html += '<div class="section-title">Weekly planner</div>';
+  for(let i=0;i<7;i++){
+    const day = SHORT[i];
+    const d = new Date(weekStart); d.setDate(d.getDate()+i);
+    const dYmd = ymd(d);
+    const blocks = ((state.weeklyPlanner[wk]||{})[day]||[]).slice().sort((a,b)=> a.start.localeCompare(b.start));
+    html += '<div class="day-card"><div class="day-card-head"><span class="day-card-title">'+FULL[day]+'</span><span class="day-card-date">'+esc(shortDate(d))+'</span></div>';
+    for(const b of blocks){
+      const catKey = CATEGORIES.some(c=>c.key===b.category) ? b.category : "admin";
+      html += '<div class="chip cat-'+catKey+'"><div class="chip-info"><span class="chip-label">'+esc(b.label)+'</span>'
+            + '<span class="chip-time">'+esc(b.start)+' &bull; '+b.duration+' min</span></div>'
+            + '<div class="chip-actions">'
+            + '<a class="chip-gcal" target="_blank" rel="noopener noreferrer" href="'+gcalUrl(d,b)+'">'+CAL_ICON_SM+'</a>'
+            + '<button class="chip-del" data-block-del="'+wk+'|'+day+'|'+b.id+'">&times;</button>'
+            + '</div></div>';
+    }
+    const extras = (state.quickLog[dYmd] && state.quickLog[dYmd].extra) || [];
+    for(const ex of extras){
+      html += '<div class="chip cat-admin"><div class="chip-info"><span class="chip-label">Logged: '+esc(ex.text)+'</span>'
+            + '<span class="chip-time">'+esc(ex.category)+'</span></div></div>';
+    }
+    html += '<button class="add-block-btn" data-toggle-block-form="'+day+'">+ Add block</button>';
+    if(state.openBlockForm === day){
+      html += '<div class="block-form">'
+            + '<div class="block-form-row"><input type="text" id="blkLabel" placeholder="Label"></div>'
+            + '<div class="block-form-row"><input type="time" id="blkStart" value="09:00"><input type="number" id="blkDuration" value="30" min="5" step="5"></div>'
+            + '<div class="block-form-row"><select id="blkCategory">';
+      for(const c of CATEGORIES){ html += '<option value="'+c.key+'">'+c.label+'</option>'; }
+      html += '</select></div>'
+            + '<button class="add-btn" data-block-add="'+day+'">ADD BLOCK</button>'
+            + '</div>';
+    }
+    html += '</div>';
+  }
+
+  document.getElementById("view").innerHTML = html;
+}
+
+/* ---------- Settings ---------- */
+function dutyEditorHtml(mode){
+  let html = "";
+  const list = state.dutyLists[mode] || [];
+  for(const item of list){
+    html += '<div class="duty-editor-row"><input type="text" data-duty-edit="'+mode+'|'+item.id+'" value="'+esc(item.text)+'">'
+          + '<button class="extra-del" data-duty-del="'+mode+'|'+item.id+'">&times;</button></div>';
+  }
+  html += '<div class="ws-add-row"><input type="text" id="dutyAddInput_'+mode+'" placeholder="Add a duty">'
+        + '<button class="add-btn" data-duty-add="'+mode+'">ADD</button></div>';
+  return html;
+}
+function renderSettings(){
+  let html = "";
+
+  html += '<div class="section-title">Appearance</div>';
+  html += '<div class="sched-row"><label>Dark mode</label><button class="toggle-btn '+(state.darkMode?'on':'')+'" data-dark-toggle>'+(state.darkMode?'ON':'OFF')+'</button></div>';
+
+  html += '<div class="section-title">Duty mode</div>';
+  html += '<div class="mode-toggle-row">'
+        + '<button class="mode-btn '+(state.dutyMode==="break"?"active":"")+'" data-mode-btn="break">BREAK MODE</button>'
+        + '<button class="mode-btn '+(state.dutyMode==="school"?"active":"")+'" data-mode-btn="school">SCHOOL MODE</button>'
+        + '</div>';
+
+  html += '<div class="section-title">Break mode duties</div>';
+  html += dutyEditorHtml("break");
+  html += '<div class="section-title">School mode duties</div>';
+  html += dutyEditorHtml("school");
+
+  html += '<div class="section-title">Weekly focus</div>';
+  for(const day of SHORT){
+    const info = state.dayRoles[day] || {role:"off", label:""};
+    html += '<div class="focus-row"><div class="focus-row-head"><strong>'+FULL[day]+'</strong>'
+          + '<select data-role-day="'+day+'">';
+    for(const rk in ROLE_META){
+      html += '<option value="'+rk+'" '+(info.role===rk?'selected':'')+'>'+ROLE_META[rk].name+'</option>';
+    }
+    html += '</select></div>';
+    html += '<textarea data-label-day="'+day+'" placeholder="Focus text for this day" rows="2">'+esc(info.label||"")+'</textarea>';
+    html += '</div>';
+  }
+  html += '<div class="io-row"><button class="io-btn" data-restore-defaults>RESTORE DEFAULTS</button></div>';
+
+  html += '<div class="section-title">Workshop dates</div>';
+  html += '<div class="ws-add-row"><input type="date" id="wsDateInput"><button class="add-btn" data-ws-add>ADD</button></div>';
+  const sortedWs = state.workshopDates.slice().sort();
+  if(sortedWs.length===0){
+    html += '<div class="empty-note">No workshop dates yet.</div>';
+  }else{
+    for(const wd of sortedWs){
+      html += '<div class="ws-date-row"><span>'+esc(shortDate(parseYmd(wd)))+'</span>'
+            + '<button class="extra-del" data-ws-del="'+wd+'">&times;</button></div>';
+    }
+  }
+
+  html += '<div class="section-title">Ads tracking</div>';
+  html += '<div class="sched-row"><label>Ads started</label><button class="toggle-btn '+(state.adsEnabled?"on":"")+'" data-ads-toggle>'+(state.adsEnabled?"ON":"OFF")+'</button></div>';
+
+  html += '<div class="section-title">Backup</div>';
+  html += '<div class="io-row"><button class="io-btn primary" data-export-btn>EXPORT (COPY)</button></div>';
+  html += '<div class="io-hint">Paste a backup below and import to restore.</div>';
+  html += '<textarea id="importBox" placeholder="Paste your backup JSON here"></textarea>';
+  html += '<div class="io-row"><button class="io-btn" data-import-btn>IMPORT</button></div>';
+
+  document.getElementById("settingsBody").innerHTML = html;
+}
+
+/* ---------- Router ---------- */
+function render(){
+  checkRollover();
+  document.querySelectorAll(".tab-btn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.tab===state.activeTab);
+  });
+  if(state.activeTab==="today") renderToday();
+  else if(state.activeTab==="ladder") renderLadder();
+  else if(state.activeTab==="numbers") renderNumbers();
+  else if(state.activeTab==="calendar") renderCalendar();
+}
+
+/* ---------- Events ---------- */
+document.getElementById("tabs").addEventListener("click", e=>{
+  const b = e.target.closest(".tab-btn");
+  if(!b) return;
+  state.activeTab = b.dataset.tab;
+  save();
+  render();
+});
+
+document.getElementById("view").addEventListener("click", e=>{
+  // duty toggle
+  const duty = e.target.closest("[data-check]");
+  if(duty){
+    const id = duty.dataset.check;
+    state.checks[id] = !state.checks[id];
+    save(); renderToday();
+    return;
+  }
+  // bad week
+  if(e.target.closest("#badWeekBtn")){
+    state.badWeek = !state.badWeek;
+    save(); renderToday();
+    return;
+  }
+  // affirmation refresh
+  if(e.target.closest("#affirmRefresh")){
+    state.affirmationIndex = (currentAffirmationIndex()+1) % AFFIRMATIONS.length;
+    save(); renderToday();
+    return;
+  }
+  // sunday widget: add/remove workshop date from Today
+  if(e.target.closest("[data-ws-add-today]")){
+    const inp = document.getElementById("wsDateInputToday");
+    const v = inp.value;
+    if(v && state.workshopDates.indexOf(v)===-1){ state.workshopDates.push(v); save(); }
+    renderToday(); return;
+  }
+  const wsDelToday = e.target.closest("[data-ws-del-today]");
+  if(wsDelToday){
+    const v = wsDelToday.dataset.wsDelToday;
+    state.workshopDates = state.workshopDates.filter(d=>d!==v);
+    save(); renderToday(); return;
+  }
+  // quick log save
+  const sq = e.target.closest("[data-save-quicklog]");
+  if(sq){
+    const dYmd = sq.dataset.saveQuicklog;
+    const form = sq.closest(".week-form");
+    const obj = state.quickLog[dYmd] || {};
+    form.querySelectorAll("input[data-qfield]").forEach(inp=>{
+      obj[inp.dataset.qfield] = inp.value;
+    });
+    state.quickLog[dYmd] = obj; save();
+    flashSaved(sq); renderToday();
+    return;
+  }
+  // quick add
+  const qaAdd = e.target.closest("[data-qa-add]");
+  if(qaAdd){
+    const dYmd = qaAdd.dataset.qaAdd;
+    const textInp = document.getElementById("qaText");
+    const catSel = document.getElementById("qaCategory");
+    const text = textInp.value.trim();
+    if(text){
+      const obj = state.quickLog[dYmd] || {};
+      obj.extra = obj.extra || [];
+      obj.extra.push({text, category: catSel.value});
+      state.quickLog[dYmd] = obj; save();
+    }
+    renderToday(); return;
+  }
+  const qaDel = e.target.closest("[data-qa-del]");
+  if(qaDel){
+    const parts = qaDel.dataset.qaDel.split("|");
+    const dYmd = parts[0], idx = parts[1];
+    const obj = state.quickLog[dYmd];
+    if(obj && obj.extra){ obj.extra.splice(parseInt(idx,10),1); save(); }
+    renderToday(); return;
+  }
+  // ladder expand
+  const head = e.target.closest("[data-level]");
+  if(head){
+    const lv = parseInt(head.dataset.level,10);
+    state.expandedLevel = (state.expandedLevel===lv) ? null : lv;
+    save(); renderLadder();
+    return;
+  }
+  // intensives gate
+  if(e.target.closest("#intensivesGate")){
+    state.intensivesClosed = !state.intensivesClosed;
+    save(); renderLadder();
+    return;
+  }
+  // save week
+  const sw = e.target.closest("[data-save-week]");
+  if(sw){
+    const wk = sw.dataset.saveWeek;
+    const form = sw.closest(".week-form");
+    const obj = state.weeks[wk] || {};
+    form.querySelectorAll("input[data-field]").forEach(inp=>{
+      obj[inp.dataset.field] = inp.value;
+    });
+    state.weeks[wk]=obj; save();
+    flashSaved(sw); renderNumbers();
+    return;
+  }
+  // save month
+  const sm = e.target.closest("[data-save-month]");
+  if(sm){
+    const mk = sm.dataset.saveMonth;
+    const form = sm.closest(".month-form");
+    const obj = state.months[mk] || {};
+    form.querySelectorAll("[data-mfield]").forEach(inp=>{
+      obj[inp.dataset.mfield] = inp.value;
+    });
+    state.months[mk]=obj; save();
+    flashSaved(sm);
+    return;
+  }
+  // calendar: save business hours
+  if(e.target.closest("[data-save-hours]")){
+    const form = e.target.closest("[data-hours-form]");
+    const wk = weekKeyFor(todayDate());
+    const obj = state.businessHours[wk] || {};
+    form.querySelectorAll("input[data-hours-day]").forEach(inp=>{
+      obj[inp.dataset.hoursDay] = inp.value;
+    });
+    state.businessHours[wk] = obj; save();
+    renderCalendar(); return;
+  }
+  // calendar: punch clock toggle
+  if(e.target.closest("[data-punch-toggle]")){
+    const tYmd = todayYmd();
+    const sessions = state.punchSessions[tYmd] || (state.punchSessions[tYmd]=[]);
+    const last = sessions[sessions.length-1];
+    if(last && last.out==null){ last.out = Date.now(); }
+    else{ sessions.push({in:Date.now(), out:null}); }
+    save(); renderCalendar();
+    return;
+  }
+  // calendar: toggle add-block form
+  const toggleForm = e.target.closest("[data-toggle-block-form]");
+  if(toggleForm){
+    const day = toggleForm.dataset.toggleBlockForm;
+    state.openBlockForm = (state.openBlockForm===day) ? null : day;
+    renderCalendar();
+    return;
+  }
+  // calendar: add block
+  const addBlock = e.target.closest("[data-block-add]");
+  if(addBlock){
+    const day = addBlock.dataset.blockAdd;
+    const label = document.getElementById("blkLabel").value.trim();
+    const start = document.getElementById("blkStart").value || "09:00";
+    const duration = parseInt(document.getElementById("blkDuration").value,10) || 30;
+    const category = document.getElementById("blkCategory").value;
+    if(label){
+      const wk = weekKeyFor(todayDate());
+      state.weeklyPlanner[wk] = state.weeklyPlanner[wk] || {};
+      state.weeklyPlanner[wk][day] = state.weeklyPlanner[wk][day] || [];
+      state.weeklyPlanner[wk][day].push({id:"blk_"+Date.now()+"_"+Math.random().toString(36).slice(2,7), label, start, duration, category});
+      save();
+    }
+    state.openBlockForm = null;
+    renderCalendar();
+    return;
+  }
+  // calendar: delete block
+  const delBlock = e.target.closest("[data-block-del]");
+  if(delBlock){
+    const parts = delBlock.dataset.blockDel.split("|");
+    const wk = parts[0], day = parts[1], id = parts[2];
+    if(state.weeklyPlanner[wk] && state.weeklyPlanner[wk][day]){
+      state.weeklyPlanner[wk][day] = state.weeklyPlanner[wk][day].filter(b=>b.id!==id);
+      save();
+    }
+    renderCalendar();
+    return;
+  }
+});
+
+function flashSaved(btn){
+  const orig = btn.textContent;
+  btn.textContent = "SAVED";
+  btn.classList.add("saved");
+  setTimeout(()=>{ btn.textContent=orig; btn.classList.remove("saved"); }, 1100);
+}
+
+/* Settings overlay */
+const settingsEl = document.getElementById("settings");
+const settingsBodyEl = document.getElementById("settingsBody");
+function closeSettingsSheet(){
+  settingsEl.classList.add("hidden");
+  render();
+}
+document.getElementById("gear").addEventListener("click", ()=>{
+  renderSettings();
+  settingsEl.classList.remove("hidden");
+});
+document.getElementById("closeSettings").addEventListener("click", closeSettingsSheet);
+settingsEl.addEventListener("click", e=>{ if(e.target===settingsEl) closeSettingsSheet(); });
+
+settingsBodyEl.addEventListener("click", e=>{
+  if(e.target.closest("[data-dark-toggle]")){
+    state.darkMode = !state.darkMode; save(); applyTheme(); renderSettings(); return;
+  }
+  const modeBtn = e.target.closest("[data-mode-btn]");
+  if(modeBtn){
+    state.dutyMode = modeBtn.dataset.modeBtn; save(); renderSettings(); return;
+  }
+  const dutyDel = e.target.closest("[data-duty-del]");
+  if(dutyDel){
+    const parts = dutyDel.dataset.dutyDel.split("|");
+    const mode = parts[0], id = parts[1];
+    state.dutyLists[mode] = state.dutyLists[mode].filter(it=>it.id!==id);
+    save(); renderSettings(); return;
+  }
+  const dutyAdd = e.target.closest("[data-duty-add]");
+  if(dutyAdd){
+    const mode = dutyAdd.dataset.dutyAdd;
+    const input = document.getElementById("dutyAddInput_"+mode);
+    const text = input.value.trim();
+    if(text){
+      state.dutyLists[mode].push({id:"custom_"+Date.now(), text});
+      save();
+    }
+    renderSettings(); return;
+  }
+  if(e.target.closest("[data-restore-defaults]")){
+    state.dayRoles = defaultDayRoles(); save(); renderSettings(); return;
+  }
+  if(e.target.closest("[data-ws-add]")){
+    const inp = document.getElementById("wsDateInput");
+    const v = inp.value;
+    if(v && state.workshopDates.indexOf(v)===-1){
+      state.workshopDates.push(v); save();
+    }
+    renderSettings(); return;
+  }
+  const wsDel = e.target.closest("[data-ws-del]");
+  if(wsDel){
+    const v = wsDel.dataset.wsDel;
+    state.workshopDates = state.workshopDates.filter(d=>d!==v);
+    save(); renderSettings(); return;
+  }
+  if(e.target.closest("[data-ads-toggle]")){
+    state.adsEnabled = !state.adsEnabled; save(); renderSettings(); return;
+  }
+  if(e.target.closest("[data-export-btn]")){
+    const json = JSON.stringify(state, null, 2);
+    const btn = e.target.closest("[data-export-btn]");
+    const done = ()=>{ btn.textContent="COPIED"; setTimeout(()=>btn.textContent="EXPORT (COPY)",1200); };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(json).then(done).catch(()=>{ fallbackCopy(json); done(); });
+    }else{ fallbackCopy(json); done(); }
+    return;
+  }
+  if(e.target.closest("[data-import-btn]")){
+    const box = document.getElementById("importBox");
+    const btn = e.target.closest("[data-import-btn]");
+    try{
+      const parsed = JSON.parse(box.value);
+      state = Object.assign(defaultState(), parsed);
+      save();
+      box.value="";
+      btn.textContent="IMPORTED";
+      setTimeout(()=>btn.textContent="IMPORT",1200);
+      renderSettings(); render();
+    }catch(err){
+      btn.textContent="INVALID JSON";
+      setTimeout(()=>btn.textContent="IMPORT",1400);
+    }
+    return;
+  }
+});
+
+settingsBodyEl.addEventListener("change", e=>{
+  const roleSel = e.target.closest("[data-role-day]");
+  if(roleSel){
+    const day = roleSel.dataset.roleDay;
+    const role = roleSel.value;
+    const info = state.dayRoles[day] || (state.dayRoles[day]={role:"off",label:""});
+    info.role = role;
+    if(role==="off"){ info.label=""; }
+    else if(role!=="custom"){ info.label = ROLE_DEFAULT_LABEL[role]||""; }
+    save(); renderSettings(); return;
+  }
+});
+settingsBodyEl.addEventListener("input", e=>{
+  const labelArea = e.target.closest("[data-label-day]");
+  if(labelArea){
+    const day = labelArea.dataset.labelDay;
+    const info = state.dayRoles[day] || (state.dayRoles[day]={role:"custom",label:""});
+    info.label = labelArea.value;
+    save(); return;
+  }
+  const dutyEdit = e.target.closest("[data-duty-edit]");
+  if(dutyEdit){
+    const parts = dutyEdit.dataset.dutyEdit.split("|");
+    const mode = parts[0], id = parts[1];
+    const item = (state.dutyLists[mode]||[]).find(it=>it.id===id);
+    if(item){ item.text = dutyEdit.value; save(); }
+    return;
+  }
+});
+
+function fallbackCopy(text){
+  const ta = document.createElement("textarea");
+  ta.value=text; document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); }catch(e){}
+  document.body.removeChild(ta);
+}
+
+/* ---------- PWA: inline manifest + best-effort service worker ---------- */
+(function(){
+  const icon = 'data:image/svg+xml,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">'
+    + '<rect width="512" height="512" rx="96" fill="#E89BBE"/>'
+    + '<text x="50%" y="50%" dy="0.06em" text-anchor="middle" dominant-baseline="middle" '
+    + 'font-family="Trebuchet MS, sans-serif" font-weight="700" font-size="300" fill="#3A3A44">L</text></svg>'
+  );
+  const manifest = {
+    name:"THE LADDER", short_name:"The Ladder",
+    start_url:".", scope:".", display:"standalone",
+    background_color:"#FFFFFF", theme_color:"#E89BBE",
+    icons:[
+      {src:icon, sizes:"512x512", type:"image/svg+xml", purpose:"any maskable"},
+      {src:icon, sizes:"192x192", type:"image/svg+xml", purpose:"any maskable"}
+    ]
+  };
+  try{
+    const blob = new Blob([JSON.stringify(manifest)], {type:"application/manifest+json"});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("link");
+    link.rel="manifest"; link.href=url;
+    document.head.appendChild(link);
+    const apple = document.createElement("link");
+    apple.rel="apple-touch-icon"; apple.href=icon;
+    document.head.appendChild(apple);
+  }catch(e){}
+
+  if("serviceWorker" in navigator && location.protocol!=="file:"){
+    try{
+      const sw = 'const CACHE_VERSION="ladder-v2";'
+               + 'self.addEventListener("install",e=>self.skipWaiting());'
+               + 'self.addEventListener("activate",e=>self.clients.claim());'
+               + 'self.addEventListener("fetch",function(e){});';
+      const swUrl = URL.createObjectURL(new Blob([sw],{type:"text/javascript"}));
+      navigator.serviceWorker.register(swUrl).catch(()=>{});
+    }catch(e){}
+  }
+})();
+
+/* ---------- Boot ---------- */
+applyTheme();
+render();
+</script>
+</body>
+</html>
